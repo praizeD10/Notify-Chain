@@ -116,10 +116,8 @@ impl SenderReputation {
 
     /// Update the reputation score based on delivery history.
     fn update_score(&mut self) {
-        self.reputation_score = calculate_reputation_score(
-            self.successful_deliveries,
-            self.failed_deliveries,
-        );
+        self.reputation_score =
+            calculate_reputation_score(self.successful_deliveries, self.failed_deliveries);
     }
 }
 

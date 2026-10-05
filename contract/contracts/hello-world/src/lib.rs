@@ -642,8 +642,9 @@ impl AutoShareContract {
     /// Get the complete reputation record for a sender.
     /// Includes successful deliveries, failed deliveries, and current score.
     pub fn get_sender_reputation(env: Env, sender: Address) -> base::reputation::SenderReputation {
-        reputation_logic::get_reputation(&env, &sender)
-            .unwrap_or_else(|_| base::reputation::SenderReputation::new(sender, env.ledger().timestamp()))
+        reputation_logic::get_reputation(&env, &sender).unwrap_or_else(|_| {
+            base::reputation::SenderReputation::new(sender, env.ledger().timestamp())
+        })
     }
 
     /// Get the reputation tier for a sender.
@@ -755,10 +756,7 @@ impl AutoShareContract {
     }
 
     /// Returns channel metadata for an AutoShare group / channel.
-    pub fn get_channel_metadata(
-        env: Env,
-        channel_id: BytesN<32>,
-    ) -> base::types::ChannelMetadata {
+    pub fn get_channel_metadata(env: Env, channel_id: BytesN<32>) -> base::types::ChannelMetadata {
         autoshare_logic::get_channel_metadata(env, channel_id).unwrap()
     }
 
@@ -808,10 +806,10 @@ mod tests {
     mod schema_version_test;
     // mod access_log_test;
     // mod subscription_cancellation_test;
-    mod channel_metadata_test;
-    mod notification_version_test;
-    mod metadata_validation_test;
     mod archive_notification_test;
+    mod channel_metadata_test;
+    mod metadata_validation_test;
+    mod notification_version_test;
 
     // ============================================================================
     // Notification Channel Subscriptions
@@ -874,88 +872,66 @@ pub mod test_utils {
 
 #[cfg(test)]
 mod tests {
-    #[path = "tests/test_utils_test.rs"]
-    mod test_utils_test;
-    #[path = "tests/storage_optimization_test.rs"]
-    mod storage_optimization_test;
-    #[path = "tests/preferences_test.rs"]
-    mod preferences_test;
-    #[path = "tests/autoshare_test.rs"]
+    #[path = "../tests/access_control_test.rs"]
+    mod access_control_test;
+    #[path = "../tests/access_log_test.rs"]
+    mod access_log_test;
+    #[path = "../tests/archive_notification_test.rs"]
+    mod archive_notification_test;
+    #[path = "../tests/audit_log_test.rs"]
+    mod audit_log_test;
+    #[path = "../tests/autoshare_test.rs"]
     mod autoshare_test;
-    #[path = "tests/pause_test.rs"]
-    mod pause_test;
-    #[path = "tests/mock_token_test.rs"]
-    mod mock_token_test;
-    #[path = "tests/version_test.rs"]
-    mod version_test;
-    #[path = "tests/notification_test.rs"]
-    mod notification_test;
-    #[path = "tests/expiration_test.rs"]
-    mod expiration_test;
-    #[path = "tests/revocation_test.rs"]
-    mod revocation_test;
-    #[path = "tests/ownership_transfer_test.rs"]
-    mod ownership_transfer_test;
-    #[path = "tests/notification_validation_test.rs"]
-    mod notification_validation_test;
-    #[path = "tests/category_registry_test.rs"]
-    mod category_registry_test;
-    #[path = "tests/batch_notification_test.rs"]
-    mod batch_notification_test;
-    #[path = "tests/audit_log_test.rs"]
-    mod audit_log_test;
-    #[path = "tests/payload_validation_test.rs"]
-    mod payload_validation_test;
-    #[path = "tests/batch_ack_test.rs"]
+    #[path = "../tests/batch_ack_test.rs"]
     mod batch_ack_test;
-    #[path = "tests/fuzz_test.rs"]
-    mod fuzz_test;
-    #[path = "tests/schema_version_test.rs"]
-    mod schema_version_test;
-    #[path = "tests/access_log_test.rs"]
-    mod access_log_test;
-    #[path = "tests/subscription_cancellation_test.rs"]
-    mod subscription_cancellation_test;
-    #[path = "tests/extended_coverage_test.rs"]
-    mod extended_coverage_test;
-
-    #[path = "tests/notification_validation_test.rs"]
-    mod notification_validation_test;
-
-    #[path = "tests/category_registry_test.rs"]
-    mod category_registry_test;
-
-    #[path = "tests/batch_notification_test.rs"]
-    mod batch_notification_test;
-
-    #[path = "tests/batch_event_test.rs"]
+    #[path = "../tests/batch_event_test.rs"]
     mod batch_event_test;
-
-    #[path = "tests/audit_log_test.rs"]
-    mod audit_log_test;
-
-    #[path = "tests/payload_validation_test.rs"]
-    mod payload_validation_test;
-
-    #[path = "tests/batch_ack_test.rs"]
-    mod batch_ack_test;
-
-    #[path = "tests/fuzz_test.rs"]
-    mod fuzz_test;
-
-    #[path = "tests/schema_version_test.rs"]
-    mod schema_version_test;
-
-    #[path = "tests/access_log_test.rs"]
-    mod access_log_test;
-
-    #[path = "../tests/template_registry_test.rs"]
-    mod template_registry_test;
-    #[path = "tests/subscription_cancellation_test.rs"]
-    mod subscription_cancellation_test;
-
+    #[path = "../tests/batch_notification_test.rs"]
+    mod batch_notification_test;
+    #[path = "../tests/category_registry_test.rs"]
+    mod category_registry_test;
+    #[path = "../tests/channel_metadata_test.rs"]
+    mod channel_metadata_test;
     #[path = "../tests/channel_subscription_test.rs"]
     mod channel_subscription_test;
-    #[path = "tests/notification_lifetime_test.rs"]
+    #[path = "../tests/expiration_test.rs"]
+    mod expiration_test;
+    #[path = "../tests/extended_coverage_test.rs"]
+    mod extended_coverage_test;
+    #[path = "../tests/fuzz_test.rs"]
+    mod fuzz_test;
+    #[path = "../tests/metadata_validation_test.rs"]
+    mod metadata_validation_test;
+    #[path = "../tests/mock_token_test.rs"]
+    mod mock_token_test;
+    #[path = "../tests/notification_lifetime_test.rs"]
     mod notification_lifetime_test;
+    #[path = "../tests/notification_test.rs"]
+    mod notification_test;
+    #[path = "../tests/notification_validation_test.rs"]
+    mod notification_validation_test;
+    #[path = "../tests/notification_version_test.rs"]
+    mod notification_version_test;
+    #[path = "../tests/ownership_transfer_test.rs"]
+    mod ownership_transfer_test;
+    #[path = "../tests/pause_test.rs"]
+    mod pause_test;
+    #[path = "../tests/payload_validation_test.rs"]
+    mod payload_validation_test;
+    #[path = "../tests/preferences_test.rs"]
+    mod preferences_test;
+    #[path = "../tests/revocation_test.rs"]
+    mod revocation_test;
+    #[path = "../tests/schema_version_test.rs"]
+    mod schema_version_test;
+    #[path = "../tests/storage_optimization_test.rs"]
+    mod storage_optimization_test;
+    #[path = "../tests/subscription_cancellation_test.rs"]
+    mod subscription_cancellation_test;
+    #[path = "../tests/template_registry_test.rs"]
+    mod template_registry_test;
+    #[path = "../tests/test_utils_test.rs"]
+    mod test_utils_test;
+    #[path = "../tests/version_test.rs"]
+    mod version_test;
 }

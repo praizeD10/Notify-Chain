@@ -10,16 +10,12 @@ export const EventListPanel = memo(function EventListPanel() {
     return (
       <div className="event-panel event-panel--empty">
         <EmptyState
-          size="inline"
-          message="No events match the current filters. Try widening your search or clearing filters."
+          className="empty-state--compact"
+          icon="🔍"
+          title="No events match"
+          description="No events match the current filters. Try adjusting or clearing your search."
         />
       </div>
-      <EmptyState
-        className="empty-state--compact"
-        icon="🔍"
-        title="No events match"
-        description="No events match the current filters. Try adjusting or clearing your search."
-      />
     );
   }
 

@@ -66,13 +66,45 @@ function overallStatusClass(status: string): string {
   }
 }
 
+function SummaryCard({
+  label,
+  value,
+  accent,
+  isLoading,
+}: {
+  label: string;
+  value: number | null;
+  accent: 'green' | 'yellow' | 'red';
+  isLoading: boolean;
+}) {
+  return (
+    <div
+      className={`notification-summary-card notification-summary-card--${accent}`}
+      aria-busy={isLoading}
+    >
+      <dt className="notification-summary-card__label">{label}</dt>
+      <dd className="notification-summary-card__value">
+        {isLoading ? (
+          <span
+            className="notification-summary-card__skeleton"
+            role="status"
+            aria-label={`Loading ${label.toLowerCase()} notifications`}
+          />
+        ) : (
+          (value ?? '—').toLocaleString()
+        )}
+      </dd>
+    </div>
+  );
+}
+
 export function NotificationHealthPanel(props: { healthUrl: string; pollIntervalMs?: number }) {
   const pollIntervalMs = props.pollIntervalMs ?? DEFAULT_POLL_INTERVAL_MS;
   const [scheduleStats, setScheduleStats] = useState<ScheduleStatsResponse | null>(null);
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [analytics, setAnalytics] = useState<NotificationAnalyticsSnapshot | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<number>(Date.now());
   const abortRef = useRef<AbortController | null>(null);
 
@@ -160,6 +192,7 @@ export function NotificationHealthPanel(props: { healthUrl: string; pollInterval
 
   const overallStatus = health?.status ?? 'unknown';
   const successRate = analytics?.overall.successRate ?? 0;
+  const isSummaryLoading = scheduleStats === null && isRefreshing;
 
   return (
     <section className="notification-health" aria-label="Notification Health">
@@ -184,6 +217,31 @@ export function NotificationHealthPanel(props: { healthUrl: string; pollInterval
           {error}
         </p>
       )}
+
+      <dl
+        className="notification-summary-cards"
+        aria-label="Notification summary"
+        aria-busy={isSummaryLoading}
+      >
+        <SummaryCard
+          label="Delivered"
+          value={scheduleStats?.completed ?? null}
+          accent="green"
+          isLoading={isSummaryLoading}
+        />
+        <SummaryCard
+          label="Pending"
+          value={scheduleStats?.pending ?? null}
+          accent="yellow"
+          isLoading={isSummaryLoading}
+        />
+        <SummaryCard
+          label="Failed"
+          value={scheduleStats?.failed ?? null}
+          accent="red"
+          isLoading={isSummaryLoading}
+        />
+      </dl>
 
       <div className="notification-health__grid">
         <div className="notification-health__card">

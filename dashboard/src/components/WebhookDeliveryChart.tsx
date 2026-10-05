@@ -148,17 +148,11 @@ export const WebhookDeliveryChart = memo(function WebhookDeliveryChart({
           })}
         </svg>
       ) : buckets.length === 0 ? (
-        <div className="webhook-delivery-chart__empty">
-          <EmptyState
-            size="inline"
-            message="No delivery data for the selected range. Try a wider date range."
-          />
-        </div>
         <EmptyState
           className="empty-state--inline"
           icon="📊"
           title="No data"
-          description="No delivery data for the selected range."
+          description="No delivery data for the selected range. Try a wider date range."
         />
       ) : (
         <svg

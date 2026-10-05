@@ -166,7 +166,10 @@ mod admin_only {
                 msg.contains("Unauthorized") || msg.contains("8")
             }
         };
-        assert!(!unauthorized_panic, "admin must pass authorization for withdraw");
+        assert!(
+            !unauthorized_panic,
+            "admin must pass authorization for withdraw"
+        );
     }
 
     #[test]
@@ -276,13 +279,7 @@ mod admin_only {
     fn test_configure_notification_limits_authorized_admin_succeeds() {
         let test_env = setup_test_env();
         let client = AutoShareContractClient::new(&test_env.env, &test_env.autoshare_contract);
-        client.configure_notification_limits(
-            &test_env.admin,
-            &1024u32,
-            &ONE_DAY,
-            &60u64,
-            &25u32,
-        );
+        client.configure_notification_limits(&test_env.admin, &1024u32, &ONE_DAY, &60u64, &25u32);
         let limits = client.get_notification_limits();
         assert_eq!(limits.max_payload_size, 1024u32);
         assert_eq!(limits.max_expiration_seconds, ONE_DAY);
@@ -296,13 +293,7 @@ mod admin_only {
         let test_env = setup_test_env();
         let client = AutoShareContractClient::new(&test_env.env, &test_env.autoshare_contract);
         let attacker = Address::generate(&test_env.env);
-        client.configure_notification_limits(
-            &attacker,
-            &1024u32,
-            &ONE_DAY,
-            &60u64,
-            &25u32,
-        );
+        client.configure_notification_limits(&attacker, &1024u32, &ONE_DAY, &60u64, &25u32);
     }
 
     #[test]
@@ -320,7 +311,10 @@ mod admin_only {
         }));
 
         let event_emitted = latest_event_topics(&env, "authorization_failure").is_some();
-        assert!(event_emitted, "unauthorized admin-role call must emit AuthorizationFailure event");
+        assert!(
+            event_emitted,
+            "unauthorized admin-role call must emit AuthorizationFailure event"
+        );
     }
 }
 
@@ -331,7 +325,12 @@ mod admin_only {
 mod creator_only {
     use super::*;
 
-    fn create_group(client: &AutoShareContractClient<'_>, env: &Env, id: &BytesN<32>, creator: &Address) {
+    fn create_group(
+        client: &AutoShareContractClient<'_>,
+        env: &Env,
+        id: &BytesN<32>,
+        creator: &Address,
+    ) {
         // create() calls autoshare_logic::create_autoshare which requires
         // creator auth + token transfer. This setup is sufficient to exercise
         // authorization-only checks on member/group mutations: create the
@@ -538,8 +537,7 @@ mod creator_or_admin_notifications {
             .expect("cancel_notification unauthorized must emit AuthorizationFailure");
         // Topics: [name, caller, category, priority, action]
         assert_eq!(event.len(), 5);
-        let topic_caller =
-            Address::try_from_val(&test_env.env, &event.get(1).unwrap()).unwrap();
+        let topic_caller = Address::try_from_val(&test_env.env, &event.get(1).unwrap()).unwrap();
         assert_eq!(topic_caller, attacker);
     }
 

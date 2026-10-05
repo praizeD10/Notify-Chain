@@ -82,7 +82,10 @@ pub fn save_channel(env: &Env, channel: &NotificationChannel) {
 pub fn is_subscribed(env: &Env, channel_id: &BytesN<32>, subscriber: &Address) -> bool {
     env.storage()
         .persistent()
-        .get(&ChannelDataKey::Subscription(channel_id.clone(), subscriber.clone()))
+        .get(&ChannelDataKey::Subscription(
+            channel_id.clone(),
+            subscriber.clone(),
+        ))
         .unwrap_or(false)
 }
 
@@ -103,17 +106,19 @@ pub fn load_subscribers(env: &Env, channel_id: &BytesN<32>) -> Vec<Address> {
 }
 
 pub fn save_subscribers(env: &Env, channel_id: &BytesN<32>, subscribers: &Vec<Address>) {
-    env.storage()
-        .persistent()
-        .set(
-            &ChannelDataKey::ChannelSubscribers(channel_id.clone()),
-            subscribers,
-        );
+    env.storage().persistent().set(
+        &ChannelDataKey::ChannelSubscribers(channel_id.clone()),
+        subscribers,
+    );
 }
 
 pub fn push_all_channel_id(env: &Env, id: &BytesN<32>) {
     let key = ChannelDataKey::AllChannels;
-    let mut all: Vec<BytesN<32>> = env.storage().persistent().get(&key).unwrap_or(Vec::new(env));
+    let mut all: Vec<BytesN<32>> = env
+        .storage()
+        .persistent()
+        .get(&key)
+        .unwrap_or(Vec::new(env));
     all.push_back(id.clone());
     env.storage().persistent().set(&key, &all);
 }

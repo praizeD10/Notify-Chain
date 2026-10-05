@@ -27,11 +27,7 @@ pub fn get_or_create_reputation(
 ) -> Result<SenderReputation, soroban_sdk::Error> {
     let key = ReputationKey::Sender(sender.clone());
 
-    match env
-        .storage()
-        .persistent()
-        .get::<_, SenderReputation>(&key)
-    {
+    match env.storage().persistent().get::<_, SenderReputation>(&key) {
         Some(rep) => Ok(rep),
         None => {
             let current_time = env.ledger().timestamp();
@@ -46,10 +42,7 @@ fn save_reputation(env: &Env, reputation: &SenderReputation) {
 }
 
 /// Record a successful notification delivery and update reputation.
-pub fn record_successful_delivery(
-    env: &Env,
-    sender: &Address,
-) -> Result<(), soroban_sdk::Error> {
+pub fn record_successful_delivery(env: &Env, sender: &Address) -> Result<(), soroban_sdk::Error> {
     let mut reputation = get_or_create_reputation(env, sender)?;
     let old_tier = tier_as_u32(reputation.get_tier());
     reputation.record_successful_delivery(env.ledger().timestamp());
@@ -126,5 +119,7 @@ pub fn get_reputation(env: &Env, sender: &Address) -> Result<SenderReputation, s
 
 /// Returns the reputation tier discriminant for a sender.
 pub fn get_reputation_tier(env: &Env, sender: &Address) -> Result<u32, soroban_sdk::Error> {
-    Ok(tier_as_u32(get_or_create_reputation(env, sender)?.get_tier()))
+    Ok(tier_as_u32(
+        get_or_create_reputation(env, sender)?.get_tier(),
+    ))
 }

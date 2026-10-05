@@ -188,11 +188,7 @@ pub fn batch_subscribe(
     })
 }
 
-fn subscribe_one(
-    env: &Env,
-    channel_id: &BytesN<32>,
-    subscriber: &Address,
-) -> Result<(), Error> {
+fn subscribe_one(env: &Env, channel_id: &BytesN<32>, subscriber: &Address) -> Result<(), Error> {
     let mut channel = load_channel(env, channel_id).ok_or(Error::NotFound)?;
 
     if !channel.is_active {

@@ -107,13 +107,7 @@ fn test_configure_limits_emits_event_with_admin_category() {
     let test_env = setup_test_env();
     let client = AutoShareContractClient::new(&test_env.env, &test_env.autoshare_contract);
 
-    client.configure_notification_limits(
-        &test_env.admin,
-        &512u32,
-        &3_600u64,
-        &1u64,
-        &10u32,
-    );
+    client.configure_notification_limits(&test_env.admin, &512u32, &3_600u64, &1u64, &10u32);
 
     assert!(
         topics_of(&test_env.env, "notification_limits_configured").is_some(),
@@ -132,13 +126,8 @@ fn test_configure_limits_non_admin_rejected() {
     let client = AutoShareContractClient::new(&test_env.env, &test_env.autoshare_contract);
     let non_admin = Address::generate(&test_env.env);
 
-    let result = client.try_configure_notification_limits(
-        &non_admin,
-        &1024u32,
-        &3_600u64,
-        &1u64,
-        &10u32,
-    );
+    let result =
+        client.try_configure_notification_limits(&non_admin, &1024u32, &3_600u64, &1u64, &10u32);
     assert!(result.is_err(), "non-admin must not configure limits");
 }
 
@@ -151,8 +140,8 @@ fn test_configure_limits_min_greater_than_max_rejected() {
     let result = client.try_configure_notification_limits(
         &test_env.admin,
         &1024u32,
-        &60u64,     // max = 60s
-        &3_600u64,  // min = 1h — greater than max
+        &60u64,    // max = 60s
+        &3_600u64, // min = 1h — greater than max
         &10u32,
     );
     assert!(result.is_err(), "min > max expiration must be rejected");
@@ -194,10 +183,7 @@ fn test_batch_ttl_overflow_rejected() {
     titles.push_back(title(&test_env.env));
 
     let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles);
-    assert!(
-        result.is_err(),
-        "batch with overflow TTL must be rejected"
-    );
+    assert!(result.is_err(), "batch with overflow TTL must be rejected");
 }
 
 // ============================================================================
@@ -307,18 +293,16 @@ fn test_category_registered_event_carries_category_and_priority() {
     // topics: [0] name, [1] admin, [2] category, [3] priority
     assert_eq!(topics.len(), 4, "category_registered must have 4 topics");
 
-    let category =
-        NotificationCategory::try_from_val(&test_env.env, &topics.get(2).unwrap())
-            .expect("topic[2] must be a NotificationCategory");
+    let category = NotificationCategory::try_from_val(&test_env.env, &topics.get(2).unwrap())
+        .expect("topic[2] must be a NotificationCategory");
     assert_eq!(
         category,
         NotificationCategory::Group,
         "registered category must match"
     );
 
-    let _priority =
-        NotificationPriority::try_from_val(&test_env.env, &topics.get(3).unwrap())
-            .expect("topic[3] must be a NotificationPriority");
+    let _priority = NotificationPriority::try_from_val(&test_env.env, &topics.get(3).unwrap())
+        .expect("topic[3] must be a NotificationPriority");
 }
 
 // ============================================================================
@@ -365,9 +349,8 @@ fn test_audit_record_appended_event_has_notification_category() {
 
     // topics: [0] name, [1] notification_id, [2] action, [3] category
     assert_eq!(topics.len(), 4);
-    let category =
-        NotificationCategory::try_from_val(&test_env.env, &topics.get(3).unwrap())
-            .expect("topic[3] must be NotificationCategory");
+    let category = NotificationCategory::try_from_val(&test_env.env, &topics.get(3).unwrap())
+        .expect("topic[3] must be NotificationCategory");
     assert_eq!(
         category,
         NotificationCategory::Notification,
@@ -387,9 +370,8 @@ fn test_audit_record_appended_carries_correct_action_topic() {
     client.record_delivery_failure(&id, &relay);
 
     let topics = topics_of(&test_env.env, "audit_record_appended").unwrap();
-    let action =
-        AuditAction::try_from_val(&test_env.env, &topics.get(2).unwrap())
-            .expect("topic[2] must be AuditAction");
+    let action = AuditAction::try_from_val(&test_env.env, &topics.get(2).unwrap())
+        .expect("topic[2] must be AuditAction");
     // Most recent audit_record_appended should be for the delivery failure.
     assert_eq!(
         action,

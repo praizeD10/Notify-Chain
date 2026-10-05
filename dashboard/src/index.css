@@ -4189,6 +4189,72 @@ body.event-explorer--resizing {
 
 /* ── Summary cards ───────────────────────────────────────────────── */
 
+.notification-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.notification-summary-card {
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.notification-summary-card--green { border-left-color: #34d399; }
+.notification-summary-card--yellow { border-left-color: #f4b400; }
+.notification-summary-card--red { border-left-color: #f87171; }
+
+.notification-summary-card__label {
+  color: #9aa0a6;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.notification-summary-card__value {
+  min-height: 36px;
+  margin: 8px 0 0;
+  color: #e8eaed;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.75rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.notification-summary-card__skeleton {
+  display: block;
+  width: min(100%, 120px);
+  height: 30px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: wh-shimmer 1.4s ease-in-out infinite;
+}
+
+[data-theme="light"] .notification-summary-card {
+  border-top-color: rgba(0, 0, 0, 0.1);
+  border-right-color: rgba(0, 0, 0, 0.1);
+  border-bottom-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="light"] .notification-summary-card--green { border-left-color: #059669; }
+[data-theme="light"] .notification-summary-card--yellow { border-left-color: #b77900; }
+[data-theme="light"] .notification-summary-card--red { border-left-color: #dc2626; }
+[data-theme="light"] .notification-summary-card__label { color: #4b5563; }
+[data-theme="light"] .notification-summary-card__value { color: #1a1a2e; }
+
 .webhook-summary-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -5678,6 +5744,50 @@ body.event-explorer--resizing {
   background: rgba(255, 107, 107, 0.1);
 }
 
+/* Channel search */
+.cd-channel-search {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+}
+
+.cd-channel-search__field {
+  display: grid;
+  gap: 6px;
+  flex: 1 1 280px;
+  max-width: 520px;
+}
+
+.cd-channel-search__label {
+  color: #9aa0a6;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.cd-channel-search__input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e8eaed;
+  font-size: 0.9rem;
+}
+
+.cd-channel-search__input:focus-visible {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+}
+
+.cd-channel-search__count {
+  padding-bottom: 9px;
+  color: #9aa0a6;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Summary strip */
 .cd-summary-strip {
   display: flex;
@@ -5725,6 +5835,34 @@ body.event-explorer--resizing {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
+}
+
+.cd-channel-empty {
+  grid-column: 1 / -1;
+  padding: 28px 20px;
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  color: #b0b8c2;
+  text-align: center;
+}
+
+.cd-channel-empty h2 {
+  margin: 0 0 6px;
+  color: #e8eaed;
+  font-size: 1.1rem;
+}
+
+.cd-channel-empty p {
+  margin: 0 0 14px;
+}
+
+.cd-channel-empty button {
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e8eaed;
+  cursor: pointer;
 }
 
 /* Channel card */
@@ -6004,6 +6142,8 @@ body.event-explorer--resizing {
   .cd-channel-card__stats {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
 @media (max-width: 640px) {
   .notif-search-page {
     padding: 16px;
@@ -6445,6 +6585,8 @@ select,
 textarea {
   font-family: inherit;
   font-size: inherit;
+}
+
 /* ── Retry statistics ─────────────────────────────────────────── */
 .retry-stats,
 .user-activity {

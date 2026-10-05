@@ -8,6 +8,56 @@ on:
       - staging
 
 jobs:
+  dependency-licenses:
+    name: NPM license policy (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - dashboard
+          - frontend
+          - listener
+          - tools/filters-cli
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install locked dependencies
+        working-directory: ${{ matrix.package }}
+        run: npm ci
+
+      - name: Setup Node for license audit
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install license audit tooling
+        run: npm install --global --ignore-scripts --no-audit --no-fund license-checker-rseidelsohn@5.0.1 spdx-expression-parse@4.0.0
+
+      - name: Check dependency licenses
+        working-directory: ${{ matrix.package }}
+        run: |
+          export NODE_PATH="$(npm root --global)"
+          node --test "$GITHUB_WORKSPACE/scripts/check-npm-licenses.test.mjs"
+          license-checker-rseidelsohn --json --excludePrivatePackages | node "$GITHUB_WORKSPACE/scripts/check-npm-licenses.mjs" -
+
+  rust-licenses:
+    name: Rust license policy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check Rust dependency licenses
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          manifest-path: contract/Cargo.toml
+          command: check licenses
+
   format:
     name: Formatting checks
     runs-on: ubuntu-latest

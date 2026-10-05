@@ -202,9 +202,6 @@ export function ActivityFeed() {
           Array.from({ length: 5 }).map((_, i) => <ActivitySkeleton key={i} />)
         ) : displayedEvents.length === 0 ? (
           <EmptyState
-            size="compact"
-            title="No activity yet"
-            message="Actions and system events will show up here as they happen."
             className="empty-state--compact"
             icon="📋"
             title="No activity yet"

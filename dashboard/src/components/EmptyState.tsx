@@ -9,7 +9,9 @@ export interface EmptyStateProps {
   /** Short heading. Omit for compact/inline placements that only need a message. */
   title?: string;
   /** Helpful message guiding the user on what to do next. */
-  message: string;
+  message?: string;
+  /** Legacy copy prop retained for existing consumers. */
+  description?: string;
   /** Custom icon/illustration. Falls back to a generic empty-tray icon. */
   icon?: ReactNode;
   /** Optional call-to-action rendered below the message. */
@@ -23,6 +25,8 @@ export interface EmptyStateProps {
    */
   size?: 'default' | 'compact' | 'inline';
   className?: string;
+  role?: string;
+  children?: ReactNode;
 }
 
 function DefaultEmptyIcon() {
@@ -42,7 +46,6 @@ function DefaultEmptyIcon() {
     </svg>
   );
 }
-
 /**
  * Reusable placeholder for any screen or section with no data to show.
  * Pairs an icon with a short title and a helpful message, and optionally
@@ -51,57 +54,27 @@ function DefaultEmptyIcon() {
 export function EmptyState({
   title,
   message,
+  description,
   icon,
   action,
   size = 'default',
   className,
-}: EmptyStateProps) {
-  const classes = ['empty-state', `empty-state--${size}`, className].filter(Boolean).join(' ');
-
-  return (
-    <div className={classes} role="status" aria-live="polite">
-      <div className="empty-state__icon">{icon ?? <DefaultEmptyIcon />}</div>
-      {title && <h2 className="empty-state__title">{title}</h2>}
-      <p className="empty-state__message">{message}</p>
-      {action && (
-        <button
-          type="button"
-          className="empty-state__action button button--secondary"
-interface EmptyStateProps {
-  icon: string;
-  title: string;
-  description: string;
-  /** Optional call-to-action button */
-  action?: {
-    label: string;
-    onClick: () => void;
-  };
-  /** Extra class for size/context variants */
-  className?: string;
-  /** aria role — defaults to "status" */
-  role?: string;
-  children?: ReactNode;
-}
-
-export function EmptyState({
-  icon,
-  title,
-  description,
-  action,
-  className = '',
   role = 'status',
   children,
 }: EmptyStateProps) {
+  const classes = ['empty-state', `empty-state--${size}`, className].filter(Boolean).join(' ');
+  const content = message ?? description ?? '';
+
   return (
-    <div className={`empty-state ${className}`} role={role}>
-      <span className="empty-state__icon" aria-hidden="true">{icon}</span>
-      <h2 className="empty-state__title">{title}</h2>
-      <p className="empty-state__description">{description}</p>
+    <div className={classes} role={role} aria-live="polite">
+      <div className="empty-state__icon">{icon ?? <DefaultEmptyIcon />}</div>
+      {title && <h2 className="empty-state__title">{title}</h2>}
+      <p className="empty-state__message empty-state__description">{content}</p>
       {children}
       {action && (
         <button
           type="button"
-          className="empty-state__action"
+          className="empty-state__action button button--secondary"
           onClick={action.onClick}
         >
           {action.label}

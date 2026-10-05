@@ -1,7 +1,7 @@
-use crate::test_utils::setup_test_env;
-use crate::AutoShareContractClient;
 use crate::base::events::NotificationCategory;
 use crate::base::events::NotificationPriority;
+use crate::test_utils::setup_test_env;
+use crate::AutoShareContractClient;
 use soroban_sdk::testutils::Events;
 use soroban_sdk::{BytesN, Symbol, Val};
 
@@ -42,10 +42,12 @@ fn test_emit_batch_processing_completed_event() {
     let topic_batch = BytesN::<32>::try_from_val(&test_env.env, &topics.get(1).unwrap()).unwrap();
     assert_eq!(topic_batch, batch_id);
 
-    let category = NotificationCategory::try_from_val(&test_env.env, &topics.get(2).unwrap()).unwrap();
+    let category =
+        NotificationCategory::try_from_val(&test_env.env, &topics.get(2).unwrap()).unwrap();
     assert_eq!(category, NotificationCategory::Notification);
 
-    let priority = NotificationPriority::try_from_val(&test_env.env, &topics.get(3).unwrap()).unwrap();
+    let priority =
+        NotificationPriority::try_from_val(&test_env.env, &topics.get(3).unwrap()).unwrap();
     assert_eq!(priority, NotificationPriority::Medium);
 
     // data should contain the processed_count (u32)

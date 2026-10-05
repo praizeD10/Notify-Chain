@@ -8,8 +8,8 @@
 /// - Event emission for both registration and update
 #[cfg(test)]
 mod template_registry_tests {
-    use crate::base::events::{NotificationCategory, NotificationPriority};
     use crate::base::errors::Error;
+    use crate::base::events::{NotificationCategory, NotificationPriority};
     use crate::test_utils::setup_test_env;
     use crate::{AutoShareContract, AutoShareContractClient};
     use soroban_sdk::{
@@ -309,10 +309,7 @@ mod template_registry_tests {
 
         // The event must have been emitted.
         let topics = topics_of(&test_env.env, "template_registered");
-        assert!(
-            topics.is_some(),
-            "TemplateRegistered event was not emitted"
-        );
+        assert!(topics.is_some(), "TemplateRegistered event was not emitted");
 
         // Category and priority must match the spec.
         assert_eq!(

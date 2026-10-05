@@ -328,6 +328,25 @@ Review expectations and a per-area checklist live in
 
 When reviewing Dependabot PRs: check the changelog for breaking changes, wait for CI to pass, and review the migration guide for major version bumps.
 
+### Dependency License Policy
+
+CI checks all npm dependency trees (`dashboard`, `frontend`, `listener`, and
+`tools/filters-cli`) and the Rust workspace. The approved license allowlist is
+MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, 0BSD, CC0-1.0, Unlicense,
+Zlib, Unicode-3.0, BlueOak-1.0.0, Python-2.0, and Apache-2.0 WITH
+LLVM-exception. For SPDX expressions, at least one approved option must be
+available for `OR`, while every term must be approved for `AND`. Missing,
+ambiguous, or unlisted licenses fail CI and report the affected package and
+license for review. Copyleft licenses and attribution-only licenses are not
+pre-approved.
+
+The executable policies are in [`deny.toml`](deny.toml) and the license-check
+steps in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and
+[`scripts/check-npm-licenses.mjs`](scripts/check-npm-licenses.mjs). Do not add a
+license to either allowlist without maintainer review. Existing dependencies
+that fall outside the policy must be reviewed, replaced, or explicitly approved
+before distribution.
+
 ## Release Process
 
 NotifyChain uses **fully automated releases** powered by

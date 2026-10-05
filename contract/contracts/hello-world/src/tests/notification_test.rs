@@ -702,7 +702,10 @@ fn test_schedule_notification_stores_assigned_priority() {
         );
 
         let stored = client.get_notification(&id);
-        assert_eq!(stored.priority, priority, "stored priority must match what was assigned at scheduling time");
+        assert_eq!(
+            stored.priority, priority,
+            "stored priority must match what was assigned at scheduling time"
+        );
     }
 }
 
@@ -723,7 +726,8 @@ fn test_schedule_notification_event_carries_assigned_priority() {
 
     let topics = topics_of(&test_env.env, "notification_scheduled").expect("event must be emitted");
     // [0] name, [1] creator, [2] category, [3] priority.
-    let priority = NotificationPriority::try_from_val(&test_env.env, &topics.get(3).unwrap()).unwrap();
+    let priority =
+        NotificationPriority::try_from_val(&test_env.env, &topics.get(3).unwrap()).unwrap();
     assert_eq!(priority, NotificationPriority::High);
 }
 

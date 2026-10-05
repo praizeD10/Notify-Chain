@@ -214,33 +214,16 @@ export function ExportHistoryPage() {
       {isLoading && <ExportHistorySkeleton rows={5} />}
 
       {/* ── Table or empty state ─────────────────────────────────── */}
-      {!isLoading && displayedExports.length > 0 && (
+      {!isLoading && displayedExports.length > 0 ? (
         <ExportHistoryTable exports={displayedExports} onDownload={handleDownload} />
-      ) : (
-        <EmptyState
-          title="No export records found"
-          message="Try modifying your search query or status filter to locate matching exports."
-      )}
-
-      {!isLoading && displayedExports.length === 0 && (
-        <section
-          className="event-explorer__empty-state"
-          role="status"
-          aria-live="polite"
-        >
-          <h2>No export records found</h2>
-          <p>
-            Try modifying your search query or status filter to locate matching exports.
-          </p>
-        </section>
-      ) : (
+      ) : !isLoading ? (
         <EmptyState
           icon="📦"
           title="No export records found"
           description="Try modifying your search query or status filter to locate matching exports."
           action={search || statusFilter !== 'all' ? { label: 'Clear filters', onClick: () => { setSearch(''); setStatusFilter('all'); } } : undefined}
         />
-      )}
+      ) : null}
 
       {/* ── Pagination ───────────────────────────────────────────── */}
       {!isLoading && (

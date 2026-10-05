@@ -5,7 +5,6 @@ import type {
   NotificationLifecycleStatus,
   NotificationReadFilter,
   NotificationSortOption,
-  NotificationStatus,
 } from '../types/event';
 import { filterEvents } from '../utils/eventData';
 
@@ -31,8 +30,7 @@ interface EventStoreState {
   setSearch: (search: string) => void;
   setContractFilter: (contractAddress: string) => void;
   setEventTypeFilter: (eventType: string) => void;
-  /** Filter by UI read/unread status. Accepts `NotificationStatus` ('all' | 'read' | 'unread'). */
-  setStatusFilter: (status: NotificationStatus) => void;
+  /** Filter by UI read/unread status. */
   setStatusFilter: (status: NotificationReadFilter) => void;
   setDateFrom: (dateFrom: string) => void;
   setDateTo: (dateTo: string) => void;

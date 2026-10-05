@@ -27,7 +27,10 @@ fn test_current_notification_version_is_documented() {
     assert_eq!(CURRENT_NOTIFICATION_VERSION, 1);
     let test_env = setup_test_env();
     let client = AutoShareContractClient::new(&test_env.env, &test_env.autoshare_contract);
-    assert_eq!(client.get_notification_version(), CURRENT_NOTIFICATION_VERSION);
+    assert_eq!(
+        client.get_notification_version(),
+        CURRENT_NOTIFICATION_VERSION
+    );
 }
 
 #[test]

@@ -79,7 +79,13 @@ fn test_schedule_stores_created_and_expiry() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 1);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     let stored = client.get_notification(&id);
     assert_eq!(stored.id, id);
@@ -95,7 +101,13 @@ fn test_schedule_emits_notification_scheduled_event() {
     let creator = test_env.users.get(0).unwrap().clone();
 
     let id = make_id(&test_env.env, 2);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     let topics = topics_of(&test_env.env, "notification_scheduled").expect("event must be emitted");
     // [0] name, [1] creator, [2] category, [3] priority.
@@ -122,7 +134,13 @@ fn test_not_expired_before_deadline_and_expired_after() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 3);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Just before the deadline: still valid.
     set_now(&test_env.env, 1_000 + ONE_HOUR - 1);
@@ -144,8 +162,13 @@ fn test_zero_duration_is_rejected() {
     let creator = test_env.users.get(0).unwrap().clone();
 
     let id = make_id(&test_env.env, 4);
-    let result =
-        client.try_schedule_notification(&id, &creator, &0, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    let result = client.try_schedule_notification(
+        &id,
+        &creator,
+        &0,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     assert!(
         result.is_err(),
         "a zero expiration duration must be rejected"
@@ -159,7 +182,13 @@ fn test_duplicate_schedule_is_rejected() {
     let creator = test_env.users.get(0).unwrap().clone();
 
     let id = make_id(&test_env.env, 5);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     let result = client.try_schedule_notification(
         &id,
@@ -192,7 +221,13 @@ fn test_expired_notification_cannot_be_cancelled() {
 
     set_now(&test_env.env, 500);
     let id = make_id(&test_env.env, 7);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Before expiry, cancellation succeeds for a fresh (different) notification.
     let fresh = make_id(&test_env.env, 8);
@@ -224,7 +259,13 @@ fn test_expire_before_deadline_is_rejected() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 9);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Not yet elapsed — finalizing expiry must be rejected.
     set_now(&test_env.env, 1_000 + ONE_HOUR - 1);
@@ -243,7 +284,13 @@ fn test_expire_after_deadline_emits_event_and_reaps_storage() {
     set_now(&test_env.env, 2_000);
     let id = make_id(&test_env.env, 10);
     let expected_expiry = 2_000 + ONE_HOUR;
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     set_now(&test_env.env, expected_expiry);
     client.expire_notification(&id);
@@ -307,7 +354,13 @@ fn test_valid_notification_can_be_cancelled_and_emits_event() {
 
     set_now(&test_env.env, 100);
     let id = make_id(&test_env.env, 13);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     client.cancel_notification(&id, &creator);
 
@@ -360,7 +413,13 @@ fn test_extend_notification_expiry_by_creator() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 20);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Extend by 30 minutes
     client.extend_notification_expiry(&id, &creator, &1_800);
@@ -395,7 +454,13 @@ fn test_extend_notification_expiry_by_admin() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 21);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Admin can extend
     client.extend_notification_expiry(&id, &admin, &1_800);
@@ -414,7 +479,13 @@ fn test_extend_notification_expiry_by_unauthorized_user_fails() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 22);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Must panic
     client.extend_notification_expiry(&id, &unauthorized, &1_800);
@@ -430,7 +501,13 @@ fn test_extend_notification_expiry_while_contract_paused_fails() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 23);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     client.pause(&admin);
 
@@ -447,7 +524,13 @@ fn test_cannot_extend_expired_notification() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 24);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Skip past expiration
     set_now(&test_env.env, 1_000 + ONE_HOUR + 1);
@@ -465,7 +548,13 @@ fn test_cannot_extend_revoked_notification() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 25);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     client.revoke_notification(&id, &creator);
 
@@ -495,7 +584,13 @@ fn test_cannot_extend_by_zero_seconds() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 27);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &notification_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &notification_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Must panic
     client.extend_notification_expiry(&id, &creator, &0);

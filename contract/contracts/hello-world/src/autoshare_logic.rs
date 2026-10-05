@@ -2,15 +2,15 @@ use crate::base::errors::Error;
 use crate::base::events::{
     AdminTransferred, AuditAction, AuditRecordAppended, AuthorizationFailure, AutoshareCreated,
     AutoshareUpdated, BatchNotificationsCreated, BatchProcessingCompleted, CategoryRegistered,
-    ChannelMetadataUpdated, ContractPaused, ContractUnpaused, GroupActivated, GroupDeactivated,
-    NotificationAccessed, NotificationAcknowledged, NotificationArchived, NotificationCategory,
-    NotificationDelivered, NotificationExpired, NotificationExtended,
-    NotificationLimitsConfigured, NotificationPriority, NotificationRecalled, NotificationRevoked,
-    NotificationScheduled, OwnershipTransferInitiated, OwnershipTransferred,
-    ContractPaused, ContractUnpaused, GroupActivated, GroupDeactivated, NotificationAccessed,
-    NotificationAcknowledged, NotificationCategory, NotificationDelivered, NotificationExpired,
-    NotificationExtended, NotificationLimitsConfigured, NotificationPriority, NotificationRecalled,
-    NotificationRevoked, NotificationScheduled, OwnershipTransferInitiated, OwnershipTransferred,
+    ChannelMetadataUpdated, ContractPaused, ContractPaused, ContractUnpaused, ContractUnpaused,
+    GroupActivated, GroupActivated, GroupDeactivated, GroupDeactivated, NotificationAccessed,
+    NotificationAccessed, NotificationAcknowledged, NotificationAcknowledged, NotificationArchived,
+    NotificationCategory, NotificationCategory, NotificationDelivered, NotificationDelivered,
+    NotificationExpired, NotificationExpired, NotificationExtended, NotificationExtended,
+    NotificationLimitsConfigured, NotificationLimitsConfigured, NotificationPriority,
+    NotificationPriority, NotificationRecalled, NotificationRecalled, NotificationRevoked,
+    NotificationRevoked, NotificationScheduled, NotificationScheduled, OwnershipTransferInitiated,
+    OwnershipTransferInitiated, OwnershipTransferred, OwnershipTransferred,
     ScheduledNotificationCancelled, SchemaVersionSet, SubscriptionCancelled, Withdrawal,
 };
 use crate::base::metadata_validation::{validate_metadata, NotificationMetadata};
@@ -1360,11 +1360,7 @@ pub fn expire_notification(env: Env, notification_id: BytesN<32>) -> Result<(), 
 
     env.storage().persistent().remove(&key);
 
-    archive_notification(
-        &env,
-        &notification,
-        String::from_str(&env, "expired"),
-    );
+    archive_notification(&env, &notification, String::from_str(&env, "expired"));
 
     append_audit_record(
         &env,
@@ -1438,11 +1434,7 @@ pub fn cancel_notification(
         env.storage()
             .persistent()
             .remove(&DataKey::ScheduledNotification(notification_id.clone()));
-        archive_notification(
-            &env,
-            &notification,
-            String::from_str(&env, "cancelled"),
-        );
+        archive_notification(&env, &notification, String::from_str(&env, "cancelled"));
     }
 
     append_audit_record(
@@ -1671,11 +1663,7 @@ pub fn confirm_notification_delivery(
 
     // Move delivered notifications into the archive to keep active storage lean.
     env.storage().persistent().remove(&key);
-    archive_notification(
-        &env,
-        &notification,
-        String::from_str(&env, "delivered"),
-    );
+    archive_notification(&env, &notification, String::from_str(&env, "delivered"));
 
     Ok(())
 }
@@ -1974,7 +1962,6 @@ pub fn emit_batch_completed(
     batch_id: BytesN<32>,
     processed_count: u32,
 ) -> Result<(), Error> {
-pub fn emit_batch_completed(env: Env, batch_id: BytesN<32>, processed_count: u32) -> Result<(), Error> {
     BatchProcessingCompleted {
         batch_id,
         category: NotificationCategory::Notification,

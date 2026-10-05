@@ -256,7 +256,8 @@ fn test_batch_empty_ids_rejected() {
     let titles: Vec<String> = Vec::new(&test_env.env);
     let priorities: Vec<NotificationPriority> = Vec::new(&test_env.env);
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(result.is_err(), "empty batch must be rejected");
 }
 
@@ -276,7 +277,8 @@ fn test_batch_mismatched_lengths_rejected() {
     titles.push_back(make_title(&test_env.env));
     priorities.push_back(NotificationPriority::Medium);
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(result.is_err(), "mismatched lengths must be rejected");
 }
 
@@ -295,7 +297,8 @@ fn test_batch_zero_ttl_rejected() {
     titles.push_back(make_title(&test_env.env));
     priorities.push_back(NotificationPriority::Medium);
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(result.is_err(), "zero TTL in batch must be rejected");
 }
 
@@ -320,7 +323,8 @@ fn test_batch_duplicate_id_rejected() {
     priorities.push_back(NotificationPriority::Medium);
     priorities.push_back(NotificationPriority::Medium);
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(result.is_err(), "duplicate ids in batch must be rejected");
 }
 
@@ -333,7 +337,13 @@ fn test_batch_id_already_scheduled_rejected() {
     let id = make_id(&test_env.env, 90);
 
     // Schedule the id individually first.
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Now try to include it in a batch — must be rejected (AlreadyExists).
     let mut ids: Vec<BytesN<32>> = Vec::new(&test_env.env);
@@ -345,7 +355,8 @@ fn test_batch_id_already_scheduled_rejected() {
     titles.push_back(make_title(&test_env.env));
     priorities.push_back(NotificationPriority::Medium);
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(
         result.is_err(),
         "batch must be rejected when an id is already scheduled"
@@ -363,7 +374,13 @@ fn test_batch_all_or_nothing_on_validation_failure() {
     let bad_id = make_id(&test_env.env, 101);
 
     // Pre-schedule the bad id so it will collide.
-    client.schedule_notification(&bad_id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &bad_id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     let mut ids: Vec<BytesN<32>> = Vec::new(&test_env.env);
     let mut ttls: Vec<u64> = Vec::new(&test_env.env);
@@ -378,7 +395,8 @@ fn test_batch_all_or_nothing_on_validation_failure() {
     priorities.push_back(NotificationPriority::Medium);
     priorities.push_back(NotificationPriority::Medium);
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(result.is_err(), "batch must fail");
 
     // The good_id must NOT have been persisted (all-or-nothing).
@@ -409,7 +427,8 @@ fn test_batch_exceeding_max_size_rejected() {
         priorities.push_back(NotificationPriority::Medium);
     }
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(result.is_err(), "batch exceeding max size must be rejected");
 }
 
@@ -465,7 +484,8 @@ fn test_batch_blocked_when_contract_paused() {
     titles.push_back(make_title(&test_env.env));
     priorities.push_back(NotificationPriority::Medium);
 
-    let result = client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
+    let result =
+        client.try_batch_schedule_notifications(&ids, &creator, &ttls, &titles, &priorities);
     assert!(
         result.is_err(),
         "batch must be rejected while contract is paused"

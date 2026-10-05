@@ -49,7 +49,13 @@ pub fn set_preferences(
 
     // Emit one event per channel so consumers see the updated fields.
     for ch in prefs.channels.iter() {
-        emit_channel_preference_updated(&env, &recipient, &ch.channel, ch.enabled, prefs.updated_at);
+        emit_channel_preference_updated(
+            &env,
+            &recipient,
+            &ch.channel,
+            ch.enabled,
+            prefs.updated_at,
+        );
     }
 
     Ok(())
@@ -153,7 +159,13 @@ pub fn reset_preferences(env: Env, recipient: Address) -> Result<(), Error> {
     save_preferences(&env, &prefs);
 
     for ch in prefs.channels.iter() {
-        emit_channel_preference_updated(&env, &recipient, &ch.channel, ch.enabled, prefs.updated_at);
+        emit_channel_preference_updated(
+            &env,
+            &recipient,
+            &ch.channel,
+            ch.enabled,
+            prefs.updated_at,
+        );
     }
 
     Ok(())

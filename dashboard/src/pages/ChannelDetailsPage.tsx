@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -219,6 +219,28 @@ export function ChannelDetailsPage() {
   const [channels, setChannels] = useState<ChannelDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const searchableChannels = useMemo(
+    () =>
+      channels.map((channel) => ({
+        channel,
+        searchText: [
+          channel.key,
+          channel.label,
+          channel.description,
+          channel.protocol,
+          statusLabel(channel.status),
+        ]
+          .join(' ')
+          .toLowerCase(),
+      })),
+    [channels],
+  );
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const filteredChannels = searchableChannels
+    .filter(({ searchText }) => searchText.includes(normalizedSearch))
+    .map(({ channel }) => channel);
 
   useEffect(() => {
     let cancelled = false;
@@ -276,14 +298,61 @@ export function ChannelDetailsPage() {
         </div>
       )}
 
+      {!loading && !error && (
+        <form
+          className="cd-channel-search"
+          role="search"
+          onSubmit={(event) => event.preventDefault()}
+        >
+          <div className="cd-channel-search__field">
+            <label className="cd-channel-search__label" htmlFor="channel-search">
+              Search channels
+            </label>
+            <input
+              id="channel-search"
+              className="cd-channel-search__input"
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Name, protocol, or keyword"
+              aria-controls="channel-results"
+            />
+          </div>
+          <span className="cd-channel-search__count" aria-live="polite">
+            {filteredChannels.length} of {channels.length} channels
+          </span>
+        </form>
+      )}
+
       {/* Summary strip */}
       {!loading && !error && <SummaryStrip channels={channels} />}
 
       {/* Channel grid */}
-      <section className="cd-channel-grid" aria-label="Channel cards" aria-busy={loading}>
-        {loading
-          ? [1, 2, 3, 4].map((i) => <ChannelCardSkeleton key={i} />)
-          : channels.map((ch) => <ChannelCard key={ch.key} ch={ch} />)}
+      <section
+        id="channel-results"
+        className="cd-channel-grid"
+        aria-label="Channel cards"
+        aria-busy={loading}
+      >
+        {loading ? (
+          [1, 2, 3, 4].map((i) => <ChannelCardSkeleton key={i} />)
+        ) : filteredChannels.length > 0 ? (
+          filteredChannels.map((channel) => <ChannelCard key={channel.key} ch={channel} />)
+        ) : (
+          <div className="cd-channel-empty" role="status">
+            <h2>No channels found</h2>
+            <p>
+              {normalizedSearch
+                ? `No channels match "${searchQuery.trim()}". Try a different keyword.`
+                : 'No channels are available right now.'}
+            </p>
+            {normalizedSearch && (
+              <button type="button" onClick={() => setSearchQuery('')}>
+                Clear search
+              </button>
+            )}
+          </div>
+        )}
       </section>
     </main>
   );

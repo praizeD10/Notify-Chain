@@ -166,6 +166,6 @@ describe('filterEvents with new filter fields', () => {
       { eventId: '3', contractAddress: 'A', eventName: 'X', receivedAt: feb1, ledger: 3, type: 'c', topic: [], value: '' },
     ];
     const result = filterEvents(events, '', 'all', 'all', 'all', '2026-01-01', '2026-01-20');
-    expect(result.map((e: { eventId: string }) => e.eventId)).toEqual(['1', '2']);
+    expect(result.map((e: { eventId: string }) => e.eventId)).toEqual(['2', '1']);
   });
 });

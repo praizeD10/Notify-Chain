@@ -61,7 +61,13 @@ fn test_schedule_notification_creates_audit_record() {
 
     set_now(&test_env.env, 1_000);
     let id = make_id(&test_env.env, 1);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     let records = client.get_audit_log();
     assert_eq!(records.len(), 1);
@@ -81,7 +87,13 @@ fn test_schedule_notification_emits_audit_event() {
     let creator = test_env.users.get(0).unwrap().clone();
 
     let id = make_id(&test_env.env, 2);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     let topics =
         topics_of(&test_env.env, "audit_record_appended").expect("audit event must be emitted");
@@ -112,7 +124,13 @@ fn test_delivery_attempt_recorded() {
     let relay = test_env.users.get(1).unwrap().clone();
 
     let id = make_id(&test_env.env, 10);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.record_delivery_attempt(&id, &relay);
 
     let records = client.get_notification_audit(&id);
@@ -131,7 +149,13 @@ fn test_delivery_failure_recorded() {
     let relay = test_env.users.get(1).unwrap().clone();
 
     let id = make_id(&test_env.env, 11);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.record_delivery_attempt(&id, &relay);
     client.record_delivery_failure(&id, &relay);
 
@@ -155,7 +179,13 @@ fn test_acknowledgment_recorded() {
     let recipient = test_env.users.get(2).unwrap().clone();
 
     let id = make_id(&test_env.env, 20);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.record_acknowledgment(&id, &recipient);
 
     let records = client.get_notification_audit(&id);
@@ -177,7 +207,13 @@ fn test_cancel_notification_creates_audit_record() {
     let creator = test_env.users.get(0).unwrap().clone();
 
     let id = make_id(&test_env.env, 30);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.cancel_notification(&id, &creator);
 
     let records = client.get_notification_audit(&id);
@@ -200,7 +236,13 @@ fn test_expire_notification_creates_audit_record() {
 
     set_now(&test_env.env, 2_000);
     let id = make_id(&test_env.env, 40);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     set_now(&test_env.env, 2_000 + ONE_HOUR);
     client.expire_notification(&id);
@@ -227,7 +269,13 @@ fn test_full_lifecycle_audit_trail() {
     set_now(&test_env.env, 500);
     let id = make_id(&test_env.env, 50);
 
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.record_delivery_attempt(&id, &relay);
     client.record_delivery_failure(&id, &relay);
     client.record_delivery_attempt(&id, &relay);
@@ -270,8 +318,20 @@ fn test_audit_sequence_numbers_increment() {
     let id1 = make_id(&test_env.env, 60);
     let id2 = make_id(&test_env.env, 61);
 
-    client.schedule_notification(&id1, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
-    client.schedule_notification(&id2, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id1,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
+    client.schedule_notification(
+        &id2,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.record_delivery_attempt(&id1, &relay);
 
     let log = client.get_audit_log();
@@ -303,7 +363,13 @@ fn test_audit_log_immutability() {
     let creator = test_env.users.get(0).unwrap().clone();
 
     let id = make_id(&test_env.env, 70);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
 
     // Snapshot after first write.
     let snapshot_seq = client.get_audit_log().get(0).unwrap().seq;
@@ -334,8 +400,20 @@ fn test_audit_records_filtered_by_notification_id() {
     let id_a = make_id(&test_env.env, 80);
     let id_b = make_id(&test_env.env, 81);
 
-    client.schedule_notification(&id_a, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
-    client.schedule_notification(&id_b, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id_a,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
+    client.schedule_notification(
+        &id_b,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.record_delivery_attempt(&id_a, &creator);
     client.record_delivery_attempt(&id_b, &creator);
     client.record_acknowledgment(&id_b, &creator);
@@ -376,7 +454,13 @@ fn test_delivery_attempt_blocked_when_paused() {
     let relay = test_env.users.get(1).unwrap().clone();
 
     let id = make_id(&test_env.env, 100);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.pause(&test_env.admin);
 
     let result = client.try_record_delivery_attempt(&id, &relay);
@@ -394,7 +478,13 @@ fn test_delivery_failure_blocked_when_paused() {
     let relay = test_env.users.get(1).unwrap().clone();
 
     let id = make_id(&test_env.env, 101);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.pause(&test_env.admin);
 
     let result = client.try_record_delivery_failure(&id, &relay);
@@ -412,7 +502,13 @@ fn test_acknowledgment_blocked_when_paused() {
     let recipient = test_env.users.get(2).unwrap().clone();
 
     let id = make_id(&test_env.env, 102);
-    client.schedule_notification(&id, &creator, &ONE_HOUR, &make_title(&test_env.env), &NotificationPriority::Medium);
+    client.schedule_notification(
+        &id,
+        &creator,
+        &ONE_HOUR,
+        &make_title(&test_env.env),
+        &NotificationPriority::Medium,
+    );
     client.pause(&test_env.admin);
 
     let result = client.try_record_acknowledgment(&id, &recipient);

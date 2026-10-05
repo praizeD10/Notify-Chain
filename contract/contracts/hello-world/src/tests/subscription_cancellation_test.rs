@@ -109,20 +109,22 @@ fn test_cancel_subscription_event_topic_shape() {
         .expect("subscription_cancelled event must be emitted");
 
     // Expected shape: [event_name, group_id, subscriber, category, priority]
-    assert_eq!(topics.len(), 5, "expected 5 topics on subscription_cancelled");
+    assert_eq!(
+        topics.len(),
+        5,
+        "expected 5 topics on subscription_cancelled"
+    );
 
     // Topic[0]: event name symbol
     let name = Symbol::try_from_val(&test_env.env, &topics.get(0).unwrap()).unwrap();
     assert_eq!(name, Symbol::new(&test_env.env, "subscription_cancelled"));
 
     // Topic[1]: group_id
-    let emitted_id =
-        BytesN::<32>::try_from_val(&test_env.env, &topics.get(1).unwrap()).unwrap();
+    let emitted_id = BytesN::<32>::try_from_val(&test_env.env, &topics.get(1).unwrap()).unwrap();
     assert_eq!(emitted_id, id);
 
     // Topic[2]: subscriber address
-    let emitted_subscriber =
-        Address::try_from_val(&test_env.env, &topics.get(2).unwrap()).unwrap();
+    let emitted_subscriber = Address::try_from_val(&test_env.env, &topics.get(2).unwrap()).unwrap();
     assert_eq!(emitted_subscriber, creator);
 
     // Topic[3]: category == Group
@@ -183,7 +185,10 @@ fn test_cancel_subscription_deactivates_group() {
         &token,
     );
 
-    assert!(client.is_group_active(&id), "group must be active before cancel");
+    assert!(
+        client.is_group_active(&id),
+        "group must be active before cancel"
+    );
 
     client.cancel_subscription(&id, &creator);
 
@@ -317,8 +322,7 @@ fn test_cancel_subscription_by_member() {
 
     // Subscriber topic must reflect member_addr, not creator.
     let topics = topics_of(&test_env.env, "subscription_cancelled").unwrap();
-    let emitted_subscriber =
-        Address::try_from_val(&test_env.env, &topics.get(2).unwrap()).unwrap();
+    let emitted_subscriber = Address::try_from_val(&test_env.env, &topics.get(2).unwrap()).unwrap();
     assert_eq!(emitted_subscriber, member_addr);
 }
 

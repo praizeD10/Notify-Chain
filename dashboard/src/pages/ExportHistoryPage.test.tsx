@@ -11,15 +11,15 @@ test('ExportHistoryPage has no accessibility violations', async () => {
   expect(results).toHaveNoViolations();
 });
 
-test('ExportHistoryPage renders correctly and lists mock exports', () => {
-  const { getByText, getByRole, getAllByRole } = render(<ExportHistoryPage />);
+test('ExportHistoryPage renders correctly and lists mock exports', async () => {
+  const { getByText, findByRole, getAllByRole } = render(<ExportHistoryPage />);
   
   // Header text
   expect(getByText('Notification Export History')).toBeInTheDocument();
   expect(getByText(/Manage, filter, and download/)).toBeInTheDocument();
   
   // Table
-  expect(getByRole('table')).toBeInTheDocument();
+  expect(await findByRole('table')).toBeInTheDocument();
   
   // First page mock rows (limit is 5)
   const rows = getAllByRole('row');
@@ -27,25 +27,25 @@ test('ExportHistoryPage renders correctly and lists mock exports', () => {
   expect(rows).toHaveLength(6);
 });
 
-test('ExportHistoryPage search and filtering works', () => {
-  const { getByLabelText, queryByText, getByText } = render(<ExportHistoryPage />);
+test('ExportHistoryPage search and filtering works', async () => {
+  const { getByLabelText, queryByText, findByText } = render(<ExportHistoryPage />);
   
   // Search for "System Alert" which exists in the mock list
   const searchInput = getByLabelText('Search Exports');
   fireEvent.change(searchInput, { target: { value: 'System Alert' } });
   
   // Should see it
-  expect(getByText('System Alert Notification logs')).toBeInTheDocument();
+  expect(await findByText('System Alert Notification logs')).toBeInTheDocument();
   
   // Should NOT see other items
   expect(queryByText('Monthly billing export')).not.toBeInTheDocument();
 });
 
-test('ExportHistoryPage pagination limit and page switching works', () => {
-  const { getByLabelText, getByText, queryByText } = render(<ExportHistoryPage />);
+test('ExportHistoryPage pagination limit and page switching works', async () => {
+  const { getByLabelText, getByText, queryByText, findByText } = render(<ExportHistoryPage />);
   
   // Initially we are on page 1 of 3 (15 items total, limit 5)
-  expect(getByText('Page 1 of 3')).toBeInTheDocument();
+  expect(await findByText('Page 1 of 3')).toBeInTheDocument();
   expect(getByText('15 total export records')).toBeInTheDocument();
   expect(getByText('System Alert Notification logs')).toBeInTheDocument();
   
